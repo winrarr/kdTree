@@ -1,6 +1,6 @@
-class KdTree<T : Comparable<T>> {
+class KdTree<T : KdTreeElement<T>>(private val maxLevel: Int) {
     data class Node<T>(
-        val data: List<T>,
+        val data: T,
         var parent: Node<T>? = null,
         var left: Node<T>? = null,
         var right: Node<T>? = null,
@@ -8,23 +8,22 @@ class KdTree<T : Comparable<T>> {
 
     private var root: Node<T>? = null
 
-    fun insert(t: List<T>) {
+    fun insert(t: T) {
         if (root == null) {
             root = Node(t)
             return
         }
-        if (t.size != root!!.data.size) throw Exception("dafuq you doin")
 
         var x = root
         var level = 0
-        val maxLevel = t.size
         while (x != null) {
-            when {
-                t[level] < x.data[level] && x.left == null  -> { x.left = Node(t); return }
-                t[level] < x.data[level]                    -> x = x.left
-                t[level] > x.data[level] && x.right == null -> { x.right = Node(t); return }
-                t[level] > x.data[level]                    -> x = x.right
-                t[level] == x.data[level]                   -> return
+            val comparison = t.compareTo(x.data, level)
+            x = when {
+                comparison < 0 && x.left == null  -> { x.left = Node(t); return }
+                comparison < 0                    -> x.left
+                comparison > 0 && x.right == null -> { x.right = Node(t); return }
+                comparison > 0                    -> x.right
+                else                              -> return
             }
             level = (level + 1) % maxLevel
         }
@@ -40,4 +39,8 @@ class KdTree<T : Comparable<T>> {
     fun print() {
         foreach({ println(it.data) }, root)
     }
+}
+
+interface KdTreeElement<T> {
+    fun compareTo(other: T, level: Int): Int
 }
