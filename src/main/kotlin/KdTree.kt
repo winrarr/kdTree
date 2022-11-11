@@ -1,7 +1,6 @@
 class KdTree<T : KdTreeElement<T>>(private val maxLevel: Int) {
     data class Node<T>(
         val data: T,
-        var parent: Node<T>? = null,
         var left: Node<T>? = null,
         var right: Node<T>? = null,
     )
@@ -28,6 +27,18 @@ class KdTree<T : KdTreeElement<T>>(private val maxLevel: Int) {
             level = (level + 1) % maxLevel
         }
     }
+
+//    Shorter but slower implementation of insert
+//
+//    fun insert(t: T) {
+//        fun trav(x: Node<T>?, level: Int): Node<T> = when {
+//            x == null -> Node(t)
+//            t.compareTo(x.data, level % maxLevel) < 0 -> Node(x.data, trav(x.left, level + 1), x.right)
+//            t.compareTo(x.data, level % maxLevel) > 0 -> Node(x.data, x.left, trav(x.right, level + 1))
+//            else -> x
+//        }
+//        root = trav(root, 0)
+//    }
 
     private fun foreach(f: (Node<T>) -> Unit, x: Node<T>?) {
         if (x == null) return

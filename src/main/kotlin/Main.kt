@@ -1,11 +1,15 @@
 import kotlin.random.Random
+import kotlin.system.measureTimeMillis
+import kotlin.time.measureTime
 
 fun main(args: Array<String>) {
     val kdt = KdTree<Point>(2)
-    for (i in 0..100) {
-        kdt.insert(Point(Random.nextInt(100), Random.nextInt(100)))
-    }
-    kdt.print()
+    val random = Random(0)
+    println(measureTimeMillis {
+        for (i in 0..10000000) {
+            kdt.insert(Point(random.nextInt(100), random.nextInt(100)))
+        }
+    })
 }
 
 data class Point(val x: Int, val y: Int) : KdTreeElement<Point> {
